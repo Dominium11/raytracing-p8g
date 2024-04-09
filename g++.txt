@@ -1,1 +1,1 @@
-g++ -o hello_world -std=c++11 hello_world.cpp boundary.cpp ray.cpp Vector2D.cpp particle.cpp -L. -lp8g++ -static-libstdc++
+g++ -o hello_world -std=c++11 hello_world.cpp boundary.cpp ray.cpp Vector2D.cpp particle.cpp color.cpp -L. -lp8g++ -static-libstdc++

@@ -4,11 +4,13 @@
 #include "ray.h"
 #include "vector"
 
+struct Color;
+
 class Particle{
     public:
         Particle(Vector2D, int);
         void draw();
-        std::vector<double> look(std::vector<Boundary> walls);
+        std::vector<std::pair<double, Color>> look(std::vector<Boundary> walls);
         void update();
         void setPosition(double x, double y);
         void rotate(double angle);

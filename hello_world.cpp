@@ -20,7 +20,7 @@ int topDownHeight = windowHeight;
 int sceneWidth = windowWidth/2;
 int sceneHeight = windowHeight;
 
-std::vector<double> scene;
+std::vector<std::pair<double, Color>> scene;
 std::vector<Boundary> walls;
 
 
@@ -37,7 +37,7 @@ void setup(){
         double y1 = randnum(0, topDownHeight);
         double x2 = randnum(0, topDownWidth);
         double y2 = randnum(0, topDownHeight);
-        walls.push_back(Boundary(x1, y1, x2, y2));
+        walls.push_back(Boundary(x1, y1, x2, y2, Color(randnum(0,255),randnum(0,255),randnum(0,255))));
     }
     walls.push_back(Boundary(1, 1, topDownWidth, 1));
     walls.push_back(Boundary(topDownWidth, 1, topDownWidth, topDownHeight));
@@ -78,14 +78,14 @@ void p8g::draw() {
         std::vector<double> sceneColors;
         std::vector<double> sceneHeights;
         for(int j = 0; j < scene.size(); j++){
-            double squared = (scene[j]/255)*(scene[j]/255);
+            double squared = (scene[j].first/255)*(scene[j].first/255);
             //double heightSquared = sceneHeight*sceneHeight;
             sceneColors.push_back(255/squared);  //Calculate brighntess from inverse square law
-            sceneHeights.push_back(20 * sceneHeight/(2*tan((fov/2) * (3.14159265359 / 180))*scene[i])); //Calculate wallheight depending on perspective (costly cuz of tangens)
+            sceneHeights.push_back(20 * sceneHeight/(2*tan((fov/2) * (3.14159265359 / 180))*scene[i].first)); //Calculate wallheight depending on perspective (costly cuz of tangens)
         }
-        fill(sceneColors[i]);
+        fill(scene[i].second.r, scene[i].second.g, scene[i].second.b, sceneColors[i]);
         rectMode(CENTER);
-        rect(i*w + w/2, sceneHeight/2, w + 2, sceneHeights[i]);
+        rect(i*w + w/2, sceneHeight/2, w, sceneHeights[i]);
     }
     pop();
 
