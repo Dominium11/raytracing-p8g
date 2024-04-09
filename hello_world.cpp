@@ -5,6 +5,7 @@
 #include "vector"
 #include <iostream>
 #include <random>
+#include <ctime>
 #include <Windows.h>
 
 using namespace p8g;
@@ -26,9 +27,9 @@ std::vector<Boundary> walls;
 
 double randnum (double a, double b)
 {
-  static std::default_random_engine generator;
-  std::uniform_real_distribution<double> distribution (a,b);
-  return distribution(generator);
+    static std::default_random_engine generator(std::time(nullptr));
+    std::uniform_real_distribution<double> distribution (a,b);
+    return distribution(generator);
 }
 
 void setup(){
