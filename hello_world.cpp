@@ -32,7 +32,7 @@ double randnum (double a, double b)
 }
 
 void setup(){
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 6; i++){
         double x1 = randnum(0, topDownWidth);
         double y1 = randnum(0, topDownHeight);
         double x2 = randnum(0, topDownWidth);
@@ -83,9 +83,16 @@ void p8g::draw() {
             sceneColors.push_back(255/squared);  //Calculate brighntess from inverse square law
             sceneHeights.push_back(20 * sceneHeight/(2*tan((fov/2) * (3.14159265359 / 180))*scene[i].first)); //Calculate wallheight depending on perspective (costly cuz of tangens)
         }
+        //Draw a found wall
         fill(scene[i].second.r, scene[i].second.g, scene[i].second.b, sceneColors[i]);
         rectMode(CENTER);
         rect(i*w + w/2, sceneHeight/2, w, sceneHeights[i]);
+        //Draw the sky above
+        fill(135, 206, 235);
+        rect(i*w + w/2, 0, w, sceneHeight - sceneHeights[i]);
+        //Draw the sky above
+        fill(19, 109, 21);
+        rect(i*w + w/2, sceneHeight, w, sceneHeight - sceneHeights[i]);
     }
     pop();
 
