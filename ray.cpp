@@ -7,6 +7,10 @@ Ray::Ray(Vector2D pos, double angle){
     direction = Vector2D(cos(angle),sin(angle));
 }
 
+void Ray::setAngle(double angle){
+    direction = Vector2D(cos(angle),sin(angle));
+}
+
 void Ray::draw(){
     stroke(255);
     push();

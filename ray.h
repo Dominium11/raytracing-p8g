@@ -9,6 +9,7 @@ class Ray{
         void draw();
         void lookAt(double x, double y);
         void setPosition(Vector2D pos);
+        void setAngle(double angle);
         Vector2D cast(Boundary wall);
     private:
         Vector2D position;

@@ -6,13 +6,19 @@
 
 class Particle{
     public:
-        Particle(Vector2D);
+        Particle(Vector2D, int);
         void draw();
-        void look(std::vector<Boundary> walls);
-        void update(double x, double y);
+        std::vector<double> look(std::vector<Boundary> walls);
+        void update();
         void setPosition(double x, double y);
+        void rotate(double angle);
+        void move(double moveSpeed);
+        double heading;
     private:
         double distance(Vector2D point1, Vector2D point2);
         Vector2D position;
         std::vector<Ray> rays;
+        short int resolution;
+        int fov;
+
 };

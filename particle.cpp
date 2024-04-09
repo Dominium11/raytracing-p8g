@@ -3,12 +3,29 @@
 
 using namespace p8g;
 
-Particle::Particle(Vector2D pos){
+Particle::Particle(Vector2D pos, int fov){
+    this->fov = fov;
     position = pos;
-    for(int i = 0; i < 360; i++){
-        Ray ray(this->position, i * (3.14159265359 / 180));
+    heading = 0;
+    resolution = 2;
+    for(int i = -fov*resolution / 2; i < fov*resolution / 2; i++){
+        Ray ray(this->position, i * (3.14159265359 / 180)/resolution);
         this->rays.push_back(ray);
     }
+}
+
+void Particle::rotate(double angle){
+    this->heading += angle;
+    int index = 0;
+    for(int a = -this->fov*resolution / 2; a < this->fov*resolution / 2; a++){
+        this->rays[index].setAngle((a * (3.14159265359 / 180))/resolution + this->heading);
+        index++;
+    }
+}
+
+void Particle::move(double direction){
+    Vector2D velocity = Vector2D(cos(this->heading)*direction,sin(this->heading)*direction);
+    this->position = this->position + velocity;
 }
 
 void Particle::setPosition(double x, double y){
@@ -16,11 +33,9 @@ void Particle::setPosition(double x, double y){
     position = temp;
 }
 
-void Particle::update(double x, double y){
-    setPosition(x,y);
-    Vector2D pos(x,y);
+void Particle::update(){
     for(Ray & ray : this->rays){
-        ray.setPosition(pos);
+        ray.setPosition(this->position);
     }
 }
 
@@ -34,7 +49,8 @@ double Particle::distance(Vector2D p1, Vector2D p2){
     return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y));
 }
 
-void Particle::look(std::vector<Boundary> walls){
+std::vector<double> Particle::look(std::vector<Boundary> walls){
+    std::vector<double> scene;
     for(Ray ray : this->rays){
         Vector2D closest(0,0);
         //This realistically should always be bigger than any position;
@@ -52,5 +68,7 @@ void Particle::look(std::vector<Boundary> walls){
         if(closest.x != 0 && closest.y != 0){
             line(position.x, position.y, closest.x, closest.y);
         }
+        scene.push_back(record);
     }
+    return scene;
 }

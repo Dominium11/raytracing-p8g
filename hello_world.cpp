@@ -4,39 +4,99 @@
 #include "particle.h"
 #include "vector"
 #include <iostream>
+#include <random>
+#include <Windows.h>
 
 using namespace p8g;
 
-int windowWidth=1000;
-int windowHeight=1000;
+int fov = 45;
 
+int windowWidth=1600;
+int windowHeight=800;
+
+int topDownWidth = windowWidth/2;
+int topDownHeight = windowHeight;
+
+int sceneWidth = windowWidth/2;
+int sceneHeight = windowHeight;
+
+std::vector<double> scene;
 std::vector<Boundary> walls;
 
-void setup(){
-    randomSeed(time(NULL));
-    for(int i = 0; i < 5; i++){
-        double x1 = random(windowWidth);
-        double y1 = random(windowHeight);
-        double x2 = random(windowWidth);
-        double y2 = random(windowHeight);
-        walls.push_back(Boundary(x1, y1, x2, y2));
-    }
+
+double randnum (double a, double b)
+{
+  static std::default_random_engine generator;
+  std::uniform_real_distribution<double> distribution (a,b);
+  return distribution(generator);
 }
 
-Particle particle(Vector2D(windowWidth/4,windowHeight/2));
+void setup(){
+    for(int i = 0; i < 5; i++){
+        double x1 = randnum(0, topDownWidth);
+        double y1 = randnum(0, topDownHeight);
+        double x2 = randnum(0, topDownWidth);
+        double y2 = randnum(0, topDownHeight);
+        walls.push_back(Boundary(x1, y1, x2, y2));
+    }
+    walls.push_back(Boundary(1, 1, topDownWidth, 1));
+    walls.push_back(Boundary(topDownWidth, 1, topDownWidth, topDownHeight));
+    walls.push_back(Boundary(topDownWidth, topDownHeight, 1, topDownHeight));
+    walls.push_back(Boundary(1, topDownHeight, 1, 1));
+}
+
+Particle particle(Vector2D(windowWidth/4,windowHeight/2), fov);
 
 void p8g::draw() {
+    //Handling keyboard
+    if(GetKeyState('A') & 0x8000){
+        particle.rotate(-0.02);
+    }
+    if(GetKeyState('D') & 0x8000){
+        particle.rotate(0.02);
+    }
+    if(GetKeyState('W') & 0x8000){
+        particle.move(1);
+    }
+    if(GetKeyState('S') & 0x8000){
+        particle.move(-1);
+    }
+
     background(1);
     for(Boundary wall : walls){
         wall.draw();
     }
-    particle.update(mouseX, mouseY);
+    particle.update();
     particle.draw();
-    particle.look(walls);
+    scene = particle.look(walls);
+
+    double w = sceneWidth / scene.size();
+    push();
+    translate(sceneWidth, 0);
+    for(int i = 0; i < scene.size(); i++){
+        noStroke();
+        std::vector<double> sceneColors;
+        std::vector<double> sceneHeights;
+        for(int j = 0; j < scene.size(); j++){
+            double squared = (scene[j]/255)*(scene[j]/255);
+            //double heightSquared = sceneHeight*sceneHeight;
+            sceneColors.push_back(255/squared);  //Calculate brighntess from inverse square law
+            sceneHeights.push_back(20 * sceneHeight/(2*tan((fov/2) * (3.14159265359 / 180))*scene[i])); //Calculate wallheight depending on perspective (costly cuz of tangens)
+        }
+        fill(sceneColors[i]);
+        rectMode(CENTER);
+        rect(i*w + w/2, sceneHeight/2, w + 2, sceneHeights[i]);
+    }
+    pop();
+
 }
 
 void p8g::keyPressed() {}
-void p8g::keyReleased() {}
+void p8g::keyReleased() {
+    if(keyCode){
+        keyCode = 0;
+    }
+}
 
 void p8g::mouseMoved() {}
 

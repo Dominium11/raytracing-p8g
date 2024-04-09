@@ -10,3 +10,8 @@ void Vector2D::normalize(){
     this->x = this->x/this->length;
     this->y = this->y/this->length;
 }
+
+Vector2D Vector2D::operator+(Vector2D& other){
+    Vector2D result(this->x+other.x, this->y+other.y);
+    return result;
+}
